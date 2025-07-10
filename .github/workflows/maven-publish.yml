@@ -9,9 +9,6 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
-    env:
-      BRANCH_NAME: ${{ github.ref_name }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,8 +29,6 @@ jobs:
           username: ${{ secrets.CLOUD_SERVER_USER }}
           password: ${{ secrets.CLOUD_SERVER_PASSWORD }}
           port: 22
-          env:
-            BRANCH_NAME: ${{ github.ref_name }}
           script: |
-            echo "Triggering deploy on branch: $BRANCH_NAME"
-            curl -X POST "http://localhost:19998/deploy?branch=$BRANCH_NAME"
+            echo "Triggering deploy on branch: master"
+            curl -X POST "http://localhost:19998/deploy?branch=master"
