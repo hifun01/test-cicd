@@ -3,14 +3,14 @@ name: CI/CD Deploy
 on:
   push:
     branches:
-      - '**'   # 任何分支推送都会触发
+      - '**'
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
     env:
-      GITHUB_REF: ${{ github.ref }}
+      BRANCH_NAME: ${{ github.ref_name }}
 
     steps:
       - name: Checkout code
@@ -27,14 +27,13 @@ jobs:
 
       - name: SSH into cloud server and trigger internal deploy
         uses: appleboy/ssh-action@master
-        env:
-          GITHUB_REF: ${{ github.ref }}
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.CLOUD_SERVER_USER }}
           password: ${{ secrets.CLOUD_SERVER_PASSWORD }}
           port: 22
+          env:
+            BRANCH_NAME: ${{ github.ref_name }}
           script: |
-            BRANCH="${GITHUB_REF#refs/heads/}"
-            echo "Triggering deploy on branch: $BRANCH"
-            curl -X POST "http://localhost:19998/deploy?branch=$BRANCH"
+            echo "Triggering deploy on branch: $BRANCH_NAME"
+            curl -X POST "http://localhost:19998/deploy?branch=$BRANCH_NAME"
