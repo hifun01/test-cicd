@@ -25,12 +25,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-      - name: SSH into cloud server and trigger internal deploy
+      - name: SSH into cloud server and trigger internal deploy (using password)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.CLOUD_SERVER_USER }}
-          key: ${{ secrets.CLOUD_SERVER_SSH_KEY }}
+          password: ${{ secrets.CLOUD_SERVER_PASSWORD }}
           port: 22
           script: |
             echo "Triggering deploy on branch: $BRANCH_NAME"
