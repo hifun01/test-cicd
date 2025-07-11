@@ -30,7 +30,7 @@ jobs:
           echo "JAR_BASENAME=$(basename $JAR_NAME)" >> $GITHUB_ENV
 
       - name: 上传 Jar 包到 Windows ⏫
-        uses: appleboy/scp-action@v0.1.4
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.LAN_SERVER_USER }}
@@ -53,7 +53,7 @@ jobs:
         run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_NAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
 
       - name: 启动远程 Debug 🐛
-        uses: appleboy/ssh-action@v1.0.4
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.LAN_SERVER_USER }}
