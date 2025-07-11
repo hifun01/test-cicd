@@ -29,10 +29,15 @@ jobs:
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
           echo "JAR_BASENAME=$(basename $JAR_NAME)" >> $GITHUB_ENV
 
-      - name: 上传Jar包 ⏫
-        uses: actions/upload-artifact@v4
+      - name: 上传 Jar 包到 Windows ⏫
+        uses: appleboy/scp-action@v0.1.4
         with:
-          path: ${{ env.JAR_BASENAME }}
+          host: ${{ secrets.CLOUD_SERVER_IP }}
+          username: ${{ secrets.LAN_SERVER_USER }}
+          password: ${{ secrets.LAN_SSH_PASSWORD }}
+          port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
+          source: ${{ env.JAR_NAME }}
+          target: ${{ secrets.LAN_JAR_PATH }}
 
       - name: 配置 SSH key 🔑
         uses: webfactory/ssh-agent@v0.9.1
@@ -47,8 +52,13 @@ jobs:
       - name: 部署Jar包到服务器 💻
         run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_NAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
 
-      - name: 开启远程Debug 🐛
-        run: ssh -p ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }} << 'EOF'
-          pkill -f 'java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}' || true
-          java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar ${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }} & 
-          EOF
+      - name: 启动远程 Debug 🐛
+        uses: appleboy/ssh-action@v1.0.4
+        with:
+          host: ${{ secrets.CLOUD_SERVER_IP }}
+          username: ${{ secrets.LAN_SERVER_USER }}
+          password: ${{ secrets.LAN_ZSSH_PASSWORD }}
+          port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
+          script: |
+            pkill -f "java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}" || true
+            java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}"
