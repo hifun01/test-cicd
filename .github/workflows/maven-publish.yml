@@ -46,4 +46,4 @@ jobs:
           password: ${{ secrets.LAN_SERVER_PASSWORD }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           script: |
-            java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}"
+            java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}"
