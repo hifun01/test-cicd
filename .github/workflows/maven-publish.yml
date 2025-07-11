@@ -34,7 +34,7 @@ jobs:
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.LAN_SERVER_USER }}
-          password: ${{ secrets.LAN_SSH_PASSWORD }}
+          key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           source: ${{ env.JAR_NAME }}
           target: ${{ secrets.LAN_JAR_PATH }}
