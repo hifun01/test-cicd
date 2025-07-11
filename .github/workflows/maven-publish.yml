@@ -34,7 +34,12 @@ jobs:
         with:
           path: ${{ env.JAR_BASENAME }}
 
-      - name: 添加服务器到 known_hosts
+      - name: 配置 SSH key 🔑
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
+
+      - name: 信任服务器 👍
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -p ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ secrets.CLOUD_SERVER_IP }} >> ~/.ssh/known_hosts
