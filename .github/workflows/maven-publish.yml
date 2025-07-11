@@ -27,6 +27,7 @@ jobs:
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           JAR_NAME=target/$ARTIFACT_ID-$VERSION.jar
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
+          echo "JAR_BASENAME=$(basename $JAR_NAME)" >> $GITHUB_ENV
 
       - name: 上传 Jar 包到 Windows ⏫
         uses: appleboy/scp-action@v1
@@ -46,4 +47,4 @@ jobs:
           password: ${{ secrets.LAN_SERVER_PASSWORD }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           script: |
-            java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}"
+            java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}"
