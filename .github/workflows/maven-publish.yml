@@ -44,7 +44,7 @@ jobs:
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.LAN_SERVER_USER }}
-          password: ${{ secrets.LAN_SSH_PASSWORD }}
+          password: ${{ secrets.LAN_SERVER_PASSWORD }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           script: |
             pkill -f "java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}" || true
