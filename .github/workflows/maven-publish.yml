@@ -34,6 +34,11 @@ jobs:
         with:
           path: ${{ env.JAR_BASENAME }}
 
+      - name: 添加服务器到 known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ secrets.CLOUD_SERVER_IP }} >> ~/.ssh/known_hosts
+
       - name: 部署Jar包到服务器 💻
         run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_NAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
 
