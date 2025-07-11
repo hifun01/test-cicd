@@ -20,7 +20,7 @@ jobs:
       - name: Maven打包 📦
         run: mvn clean package
 
-      - name: 获取 Jar 包名称 🎯
+      - name: 获取 Jar 包名 🎯
         id: get-jar
         run: |
           ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
