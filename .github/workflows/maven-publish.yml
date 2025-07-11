@@ -47,5 +47,5 @@ jobs:
           password: ${{ secrets.LAN_SERVER_PASSWORD }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           script: |
-            wmic process where "name='java.exe' and commandline like '%${{ env.JAR_BASENAME }}%'" call terminate
+            Get-Process java | Where-Object { $_.Path -ne $null -and $_.Path -ne '' -and $_.Path.ToLower().EndsWith('java.exe') -and $_.CommandLine -like "*${{ env.JAR_BASENAME }}*" } | Stop-Process -Force
             java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}"
