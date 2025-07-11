@@ -14,7 +14,7 @@ jobs:
       - name: 修改JDK环境 ☕️
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Maven打包 📦
