@@ -35,7 +35,7 @@ jobs:
           path: ${{ env.JAR_BASENAME }}
 
       - name: 配置 SSH key 🔑
-        uses: webfactory/ssh-agent@v0.8.1
+        uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
 
