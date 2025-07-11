@@ -47,5 +47,5 @@ jobs:
           password: ${{ secrets.LAN_SERVER_PASSWORD }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           script: |
-            pkill -f "java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}" || true
+            wmic process where "name='java.exe' and commandline like '%${{ env.JAR_BASENAME }}%'" call terminate
             java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}"
