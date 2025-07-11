@@ -39,11 +39,6 @@ jobs:
           source: ${{ env.JAR_NAME }}
           target: ${{ secrets.LAN_JAR_PATH }}
 
-      - name: 配置 SSH key 🔑
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
-
       - name: 信任服务器 👍
         run: |
           mkdir -p ~/.ssh
