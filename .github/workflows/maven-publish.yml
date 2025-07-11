@@ -30,7 +30,7 @@ jobs:
           echo "JAR_BASENAME=$(basename $JAR_NAME)" >> $GITHUB_ENV
 
       - name: 上传 Jar 包到 Windows ⏫
-        uses: appleboy/scp-action@v1.0.0
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.LAN_SERVER_USER }}
