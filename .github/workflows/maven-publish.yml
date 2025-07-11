@@ -39,22 +39,12 @@ jobs:
           source: ${{ env.JAR_NAME }}
           target: ${{ secrets.LAN_JAR_PATH }}
 
-      - name: 杀死老进程 🥷
-        uses: appleboy/ssh-action@v0.1.10
+      - name: 启动远程 Debug 🐛
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.CLOUD_SERVER_IP }}
           username: ${{ secrets.LAN_SERVER_USER }}
           password: ${{ secrets.LAN_SERVER_PASSWORD }}
           port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
           script: |
-            powershell -Command "Get-Process java -ErrorAction SilentlyContinue | Where-Object { $_.Path -ne $null -and $_.Path.ToLower().EndsWith('java.exe') -and $_.CommandLine -like '*${{ env.JAR_BASENAME }}*' } | Stop-Process -Force"
-
-      - name: 启动远程 Debug 🐛
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.CLOUD_SERVER_IP }}
-          username: ${{ secrets.LAN_SERVER_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.CLOUD2LAN_SSH_PORT }}
-          script: |
-            powershell -Command "Start-Process -FilePath 'java' -ArgumentList '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar \"${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}\"' -NoNewWindow"
+            java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar "${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}"
