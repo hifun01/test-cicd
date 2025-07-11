@@ -2,33 +2,43 @@ name: CI/CD Deploy
 
 on:
   push:
-    branches:
-      - '**'
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 代码检查 🔍
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: 修改JDK环境 ☕️
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build with Maven
+      - name: Maven打包 📦
         run: mvn clean package
 
-      - name: SSH into cloud server and trigger internal deploy
-        uses: appleboy/ssh-action@master
+      - name: 获取 Jar 包名称 🎯
+        id: get-jar
+        run: |
+          ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          JAR_NAME=target/$ARTIFACT_ID-$VERSION.jar
+          echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
+
+      - name: 上传Jar包 ⏫
+        uses: actions/upload-artifact@v3
         with:
-          host: ${{ secrets.CLOUD_SERVER_IP }}
-          username: ${{ secrets.CLOUD_SERVER_USER }}
-          password: ${{ secrets.CLOUD_SERVER_PASSWORD }}
-          port: 22
-          script: |
-            echo "Triggering deploy on branch: master"
-            curl -X POST "http://localhost:19998/deploy?branch=master"
+          name: app-jar
+          path: ${{ env.JAR_NAME }}
+
+      - name: 部署Jar包到服务器 💻
+        run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_NAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
+
+      - name: 开启远程Debug 🐛
+        run: ssh -p ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }} << 'EOF'
+          pkill -f 'java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}' || true
+          java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar ${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }} & 
+          EOF
