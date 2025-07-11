@@ -35,7 +35,7 @@ jobs:
           path: ${{ env.JAR_BASENAME }}
 
       - name: 部署Jar包到服务器 💻
-        run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_BASENAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
+        run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_NAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
 
       - name: 开启远程Debug 🐛
         run: ssh -p ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }} << 'EOF'
