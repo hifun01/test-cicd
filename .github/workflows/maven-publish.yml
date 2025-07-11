@@ -25,7 +25,7 @@ jobs:
         run: |
           ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          JAR_NAME=$ARTIFACT_ID-$VERSION.jar
+          JAR_NAME=target/$ARTIFACT_ID-$VERSION.jar
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
 
       - name: 上传 Jar 包到 Windows ⏫
