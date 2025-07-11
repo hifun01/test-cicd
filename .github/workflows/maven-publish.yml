@@ -27,18 +27,18 @@ jobs:
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           JAR_NAME=target/$ARTIFACT_ID-$VERSION.jar
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
+          echo "JAR_BASENAME=$(basename $JAR_NAME)" >> $GITHUB_ENV
 
       - name: 上传Jar包 ⏫
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: app-jar
-          path: ${{ env.JAR_NAME }}
+          path: ${{ env.JAR_BASENAME }}
 
       - name: 部署Jar包到服务器 💻
-        run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_NAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
+        run: scp -P ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ env.JAR_BASENAME }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }}:${{ secrets.LAN_JAR_PATH }}
 
       - name: 开启远程Debug 🐛
         run: ssh -p ${{ secrets.CLOUD2LAN_SSH_PORT }} ${{ secrets.LAN_SERVER_USER }}@${{ secrets.CLOUD_SERVER_IP }} << 'EOF'
-          pkill -f 'java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }}' || true
-          java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar ${{ secrets.LAN_JAR_PATH }}${{ env.JAR_NAME }} & 
+          pkill -f 'java.*${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }}' || true
+          java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar ${{ secrets.LAN_JAR_PATH }}${{ env.JAR_BASENAME }} & 
           EOF
